@@ -1,0 +1,15 @@
+name: VotePlugin
+author: SmerryBeta
+main: me.smerrybeta.VotePlugin
+version: 1.0
+description: this is Code for Voting in the Game.
+api-version: "1.20"
+commands:
+  Vote:
+    description: 投票
+    usage: 用法 ：/Vote <command>
+    aliases: [v]
+permissions:
+  vote.main:
+    description: use to check commander
+    default: op
