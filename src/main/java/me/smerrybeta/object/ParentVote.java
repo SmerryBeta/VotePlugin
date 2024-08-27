@@ -17,7 +17,6 @@ public class ParentVote {
     private Set<ChildVote> childVotes;
     private Date deadline;
     private boolean end = false;
-    private HashMap<Integer,ItemStack> priceMap = new HashMap<>();
 
 
     // 构造函数
@@ -37,6 +36,7 @@ public class ParentVote {
             VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Description", description);
             VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".VoteLimit", voteLimit);
             VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Deadline", formattedDeadline);
+            VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Over", "false");
 
             List<Integer> CVIds = new ArrayList<>();
 
@@ -122,7 +122,8 @@ public class ParentVote {
 
     public void setEnd (boolean end) {
         VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".End", end);
-        VotePlugin.plugin.getResource().getParentVote().save();
+        if (! VotePlugin.plugin.getResource().getParentVote().contains("PV." + this.id + ".Over"))
+            VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Over", "false");
 
         this.end = end;
 
@@ -137,20 +138,16 @@ public class ParentVote {
             }
             if (maxChild != null) {
                 String command = maxChild.getCommand();
-                if (command != null) {
+                String over = VotePlugin.plugin.getResource().getParentVote().getString("PV." + this.id + ".Over");
+                if (command != null && over != null && over.equalsIgnoreCase("false")) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                    Bukkit.getServer().getLogger().info(Functions.IR() + "§c执行了指令：" + command);
+                    Bukkit.getServer().getConsoleSender().sendMessage(Functions.IR() + "§c执行了指令：" + command);
                 }
             }
-        }
-    }
+            VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Over", "true");
+        } else VotePlugin.plugin.getResource().getParentVote().set("PV." + this.id + ".Over", "false");
 
-    public HashMap<Integer, ItemStack> getPriceMap () {
-        return priceMap;
-    }
-
-    public void setPriceMap (HashMap<Integer, ItemStack> priceMap) {
-        this.priceMap = priceMap;
+        VotePlugin.plugin.getResource().getParentVote().save();
     }
 
     // get 方法
@@ -207,7 +204,7 @@ public class ParentVote {
     }
 
     public boolean hasPrice () {
-        HashMap<Integer,ItemStack> kitMap = Functions.getKitMap(this);
-        return kitMap != null && !kitMap.isEmpty();
+        HashMap<Integer, ItemStack> kitMap = Functions.getKitMap(this);
+        return kitMap != null && ! kitMap.isEmpty();
     }
 }

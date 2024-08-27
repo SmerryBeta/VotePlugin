@@ -350,7 +350,6 @@ public class Functions {
                 kitMap.put(Integer.valueOf(index), VotePlugin.plugin.getResource().getVotePrice().getItemStack("VP." + parentVote.getId() + "." + index));
             } catch (NumberFormatException ignored) {
             }
-        parentVote.setPriceMap(kitMap);
         return kitMap;
     }
 
